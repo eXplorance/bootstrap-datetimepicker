@@ -104,8 +104,8 @@
                 37: 'left',
                 'right': 39,
                 39: 'right',
-                'tab': 9,
-                9: 'tab',
+                // 'tab': 9,
+                // 9: 'tab',
                 'escape': 27,
                 27: 'escape',
                 'enter': 13,
@@ -1257,7 +1257,24 @@
                 return (widget ? hide() : show());
             },
 
+            isInKeyMap = function (key) {
+                var isInKeyMap = false,
+                    index;
+
+                for (index in keyMap) {
+                    if (keyMap.hasOwnProperty(index) && keyMap[index] === key) {
+                        isInKeyMap = true;
+                        break;
+                    }
+                }
+
+                return isInKeyMap;
+            },
+
             keydown = function (e) {
+                if (!widget) {
+                    return;
+                }
                 var handler = null,
                     index,
                     index2,
@@ -1268,8 +1285,9 @@
                     allModifiersPressed,
                     pressed = 'p';
 
-                keyState[currentKey] = pressed;
-
+                if (isInKeyMap(currentKey)) {
+                    keyState[currentKey] = pressed;
+                }
                 for (index in keyState) {
                     if (keyState.hasOwnProperty(index) && keyState[index] === pressed) {
                         pressedKeys.push(index);
@@ -1306,7 +1324,12 @@
             },
 
             keyup = function (e) {
-                keyState[e.which] = 'r';
+                if (!widget) {
+                    return;
+                }
+                if (isInKeyMap(e.which)) {
+                    keyState[e.which] = 'r';
+                }
                 e.stopPropagation();
                 e.preventDefault();
             },
@@ -2517,7 +2540,7 @@
             },
             down: function (widget) {
                 if (!widget) {
-                    this.show();
+                    // this.show();
                     return;
                 }
                 var d = this.date() || this.getMoment();
