@@ -1,4 +1,4 @@
-/*! version : 4.17.42
+/*! version : 4.15.35
  =========================================================
  bootstrap-datetimejs
  https://github.com/Eonasdan/bootstrap-datetimepicker
@@ -39,7 +39,7 @@
         // AMD is used - Register as an anonymous module.
         define(['jquery', 'moment'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('jquery'), require('moment'));
+        factory(require('jquery'), require('moment'));
     } else {
         // Neither AMD nor CommonJS used. Use global variables.
         if (typeof jQuery === 'undefined') {
