@@ -931,7 +931,7 @@
                     date: date.clone()
                 });
 
-                input.blur();
+                input.focus();
 
                 currentViewMode = 0;
                 viewDate = date.clone();
