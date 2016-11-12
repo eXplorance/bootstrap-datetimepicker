@@ -118,6 +118,8 @@
                 16: 'shift',
                 'control': 17,
                 17: 'control',
+                'alt': 18,
+                18: 'alt',
                 'space': 32,
                 32: 'space',
                 't': 84,
