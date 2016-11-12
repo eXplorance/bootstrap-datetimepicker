@@ -104,8 +104,8 @@
                 37: 'left',
                 'right': 39,
                 39: 'right',
-                'tab': 9,
-                9: 'tab',
+                // 'tab': 9,
+                // 9: 'tab',
                 'escape': 27,
                 27: 'escape',
                 'enter': 13,
@@ -118,6 +118,8 @@
                 16: 'shift',
                 'control': 17,
                 17: 'control',
+                'alt': 18,
+                18: 'alt',
                 'space': 32,
                 32: 'space',
                 't': 84,
@@ -866,7 +868,7 @@
 
                 if (isValid(targetMoment)) {
                     date = targetMoment;
-                    //viewDate = date.clone(); // TODO this doesn't work right on first use
+                    viewDate = date.clone(); // TODO this doesn't work right on first use
                     input.val(date.format(actualFormat));
                     element.data('date', date.format(actualFormat));
                     unset = false;
@@ -931,7 +933,7 @@
                     date: date.clone()
                 });
 
-                input.blur();
+                input.focus();
 
                 currentViewMode = 0;
                 viewDate = date.clone();
@@ -1257,7 +1259,24 @@
                 return (widget ? hide() : show());
             },
 
+            isInKeyMap = function (key) {
+                var isInKeyMap = false,
+                    index;
+
+                for (index in keyMap) {
+                    if (keyMap.hasOwnProperty(index) && keyMap[index] === key) {
+                        isInKeyMap = true;
+                        break;
+                    }
+                }
+
+                return isInKeyMap;
+            },
+
             keydown = function (e) {
+                if (!widget) {
+                    return;
+                }
                 var handler = null,
                     index,
                     index2,
@@ -1268,8 +1287,9 @@
                     allModifiersPressed,
                     pressed = 'p';
 
-                keyState[currentKey] = pressed;
-
+                if (isInKeyMap(currentKey)) {
+                    keyState[currentKey] = pressed;
+                }
                 for (index in keyState) {
                     if (keyState.hasOwnProperty(index) && keyState[index] === pressed) {
                         pressedKeys.push(index);
@@ -1306,7 +1326,12 @@
             },
 
             keyup = function (e) {
-                keyState[e.which] = 'r';
+                if (!widget) {
+                    return;
+                }
+                if (isInKeyMap(e.which)) {
+                    keyState[e.which] = 'r';
+                }
                 e.stopPropagation();
                 e.preventDefault();
             },
@@ -2517,7 +2542,7 @@
             },
             down: function (widget) {
                 if (!widget) {
-                    this.show();
+                    // this.show();
                     return;
                 }
                 var d = this.date() || this.getMoment();
