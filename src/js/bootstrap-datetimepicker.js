@@ -715,7 +715,9 @@
                     html = [],
                     row,
                     clsNames = [],
-                    i;
+                    i,
+                    datePickerTable,
+                    selectedDay;
 
                 if (!hasDate()) {
                     return;
@@ -729,9 +731,9 @@
                 daysViewHeader.eq(1).text(viewDate.format(options.dayViewHeaderFormat));
 
                 if (!unset) {
-                    var datePickerTable = daysView.find('table');
+                    datePickerTable = daysView.find('table');
                     datePickerTable.removeAttr('aria-activedescendant');
-                    datePickerTable.attr('aria-activedescendant', 'date' + date.format("YYYYMMDD"));
+                    datePickerTable.attr('aria-activedescendant', 'date' + date.format('YYYYMMDD'));
                 }
 
                 if (!isValid(viewDate.clone().subtract(1, 'M'), 'M')) {
@@ -759,7 +761,7 @@
                         clsNames.push('new');
                     }
 
-                    var selectedDay = !unset && currentDate.isSame(date, 'd');
+                    selectedDay = !unset && currentDate.isSame(date, 'd');
                     if (selectedDay) {
                         clsNames.push('active');
                     }
@@ -784,7 +786,7 @@
                         .attr('data-day', currentDate.format('L'))
                         .addClass(clsNames.join(' '))
                         .attr('aria-selected', selectedDay ? 'true' : 'false')
-                        .attr('id', 'date' + currentDate.format("YYYYMMDD"))
+                        .attr('id', 'date' + currentDate.format('YYYYMMDD'))
                         .attr('role', 'gridcell')
                         .text(currentDate.date())
                         );
