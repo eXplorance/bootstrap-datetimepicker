@@ -206,7 +206,6 @@
                             .attr('data-action', 'pickerSwitch')
                             .attr('colspan', (options.calendarWeeks ? '6' : '5'))
                             .attr('id', labelId)
-                            .attr('role', 'heading')
                             .attr('aria-live', 'assertive')
                             .attr('aria-atomic', 'true')
                             .attr('role', 'button')
@@ -226,22 +225,22 @@
 
                 return [
                     $('<div>').addClass('datepicker-days')
-                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-days-label').attr('tabindex', 0)
+                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-days-label').attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-days-label'))
                             .append($('<tbody>'))
                             ),
                     $('<div>').addClass('datepicker-months')
-                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-months-label')
+                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-months-label').attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-months-label'))
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-years')
-                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-years-label')
+                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-years-label').attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-years-label'))
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-decades')
-                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-decades-label')
+                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-decades-label').attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-decades-label'))
                             .append(contTemplate.clone())
                             )
@@ -514,11 +513,16 @@
                 if (dir) {
                     currentViewMode = Math.max(minViewModeNumber, Math.min(3, currentViewMode + dir));
                 }
-                widget.find('.datepicker > div').hide().filter('.datepicker-' + datePickerModes[currentViewMode].clsName).show();
+                widget.find('.datepicker > div')
+                  .hide()
+                  .attr('aria-hidden', true)
+                  .filter('.datepicker-' + datePickerModes[currentViewMode].clsName)
+                  .show()
+                  .attr('aria-hidden', false);
             },
 
             fillDow = function () {
-                var row = $('<tr>').attr('role', 'row'),
+                var row = $('<tr>'),
                     currentDate = viewDate.clone().startOf('w').startOf('d');
 
                 if (options.calendarWeeks === true) {
@@ -747,7 +751,7 @@
 
                 for (i = 0; i < 42; i++) { //always display 42 days (should show 6 weeks)
                     if (currentDate.weekday() === 0) {
-                        row = $('<tr>').attr('role', 'row');
+                        row = $('<tr>');
                         if (options.calendarWeeks) {
                             row.append('<td class="cw">' + currentDate.week() + '</td>');
                         }
@@ -787,7 +791,6 @@
                         .addClass(clsNames.join(' '))
                         .attr('aria-selected', selectedDay ? 'true' : 'false')
                         .attr('id', 'date' + currentDate.format('YYYYMMDD'))
-                        .attr('role', 'gridcell')
                         .text(currentDate.date())
                         );
 
@@ -1297,8 +1300,12 @@
                 }
                 place();
                 widget.show();
-                if (options.focusOnShow && !input.is(':focus')) {
+                if (options.focusOnShow && !input.is(':focus') && !options.accessibilityFocus) {
                     input.focus();
+                }
+
+                if (options.accessibilityFocus) {
+                    widget.find('.datepicker-days table').focus();
                 }
 
                 notifyEvent({
@@ -2558,6 +2565,7 @@
         ignoreReadonly: false,
         keepOpen: false,
         focusOnShow: true,
+        accessibilityFocus: true,
         inline: false,
         keepInvalid: false,
         datepickerInput: '.datepickerinput',
