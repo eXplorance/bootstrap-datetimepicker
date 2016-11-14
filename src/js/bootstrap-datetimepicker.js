@@ -120,6 +120,10 @@
                 17: 'control',
                 'space': 32,
                 32: 'space',
+                'end': 35,
+                35: 'end',
+                'home': 36,
+                36: 'home',
                 't': 84,
                 84: 't',
                 'delete': 46,
@@ -191,41 +195,54 @@
                 return (isEnabled('y') || isEnabled('M') || isEnabled('d'));
             },
 
+            getHeadTemplate = function (labelId) {
+                return $('<thead>')
+                    .append($('<tr>')
+                        .append($('<th>').addClass('prev').attr('data-action', 'previous').attr('role', 'button').attr('tabindex', '0')
+                            .append($('<span>').addClass(options.icons.previous))
+                            )
+                        .append($('<th>')
+                            .addClass('picker-switch')
+                            .attr('data-action', 'pickerSwitch')
+                            .attr('colspan', (options.calendarWeeks ? '6' : '5'))
+                            .attr('id', labelId)
+                            .attr('role', 'heading')
+                            .attr('aria-live', 'assertive')
+                            .attr('aria-atomic', 'true')
+                            .attr('role', 'button')
+                            .attr('tabindex', '0')
+                            )
+                        .append($('<th>').addClass('next').attr('data-action', 'next').attr('role', 'button').attr('tabindex', '0')
+                            .append($('<span>').addClass(options.icons.next))
+                            )
+                        );
+            },
+
             getDatePickerTemplate = function () {
-                var headTemplate = $('<thead>')
-                        .append($('<tr>')
-                            .append($('<th>').addClass('prev').attr('data-action', 'previous')
-                                .append($('<span>').addClass(options.icons.previous))
-                                )
-                            .append($('<th>').addClass('picker-switch').attr('data-action', 'pickerSwitch').attr('colspan', (options.calendarWeeks ? '6' : '5')))
-                            .append($('<th>').addClass('next').attr('data-action', 'next')
-                                .append($('<span>').addClass(options.icons.next))
-                                )
-                            ),
-                    contTemplate = $('<tbody>')
+                var contTemplate = $('<tbody>')
                         .append($('<tr>')
                             .append($('<td>').attr('colspan', (options.calendarWeeks ? '8' : '7')))
                             );
 
                 return [
                     $('<div>').addClass('datepicker-days')
-                        .append($('<table>').addClass('table-condensed')
-                            .append(headTemplate)
+                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-days-label')
+                            .append(getHeadTemplate('datepicker-days-label'))
                             .append($('<tbody>'))
                             ),
                     $('<div>').addClass('datepicker-months')
-                        .append($('<table>').addClass('table-condensed')
-                            .append(headTemplate.clone())
+                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-months-label')
+                            .append(getHeadTemplate('datepicker-months-label'))
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-years')
-                        .append($('<table>').addClass('table-condensed')
-                            .append(headTemplate.clone())
+                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-years-label')
+                            .append(getHeadTemplate('datepicker-years-label'))
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-decades')
-                        .append($('<table>').addClass('table-condensed')
-                            .append(headTemplate.clone())
+                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-decades-label')
+                            .append(getHeadTemplate('datepicker-decades-label'))
                             .append(contTemplate.clone())
                             )
                 ];
@@ -501,7 +518,7 @@
             },
 
             fillDow = function () {
-                var row = $('<tr>'),
+                var row = $('<tr role="row">'),
                     currentDate = viewDate.clone().startOf('w').startOf('d');
 
                 if (options.calendarWeeks === true) {
@@ -509,7 +526,13 @@
                 }
 
                 while (currentDate.isBefore(viewDate.clone().endOf('w'))) {
-                    row.append($('<th>').addClass('dow').text(currentDate.format('dd')));
+                    row.append($('<th>')
+                        .addClass('dow')
+                        .append($('<abbr>')
+                            .attr('title', currentDate.format('dddd'))
+                            .text(currentDate.format('dd'))
+                            )
+                        );
                     currentDate.add(1, 'd');
                 }
                 widget.find('.datepicker-days thead').append(row);
@@ -705,6 +728,12 @@
                 daysView.find('.disabled').removeClass('disabled');
                 daysViewHeader.eq(1).text(viewDate.format(options.dayViewHeaderFormat));
 
+                if (!unset) {
+                    var datePickerTable = daysView.find('table');
+                    datePickerTable.removeAttr('aria-activedescendant');
+                    datePickerTable.attr('aria-activedescendant', 'date' + date.format("YYYYMMDD"));
+                }
+
                 if (!isValid(viewDate.clone().subtract(1, 'M'), 'M')) {
                     daysViewHeader.eq(0).addClass('disabled');
                 }
@@ -716,7 +745,7 @@
 
                 for (i = 0; i < 42; i++) { //always display 42 days (should show 6 weeks)
                     if (currentDate.weekday() === 0) {
-                        row = $('<tr>');
+                        row = $('<tr>').attr('role', 'row');
                         if (options.calendarWeeks) {
                             row.append('<td class="cw">' + currentDate.week() + '</td>');
                         }
@@ -729,7 +758,9 @@
                     if (currentDate.isAfter(viewDate, 'M')) {
                         clsNames.push('new');
                     }
-                    if (currentDate.isSame(date, 'd') && !unset) {
+
+                    var selectedDay = !unset && currentDate.isSame(date, 'd');
+                    if (selectedDay) {
                         clsNames.push('active');
                     }
                     if (!isValid(currentDate, 'd')) {
@@ -741,12 +772,23 @@
                     if (currentDate.day() === 0 || currentDate.day() === 6) {
                         clsNames.push('weekend');
                     }
+
                     notifyEvent({
                         type: 'dp.classify',
                         date: currentDate,
                         classNames: clsNames
                     });
-                    row.append('<td data-action="selectDay" data-day="' + currentDate.format('L') + '" class="' + clsNames.join(' ') + '">' + currentDate.date() + '</td>');
+
+                    row.append($('<td>')
+                        .attr('data-action', 'selectDay')
+                        .attr('data-day', currentDate.format('L'))
+                        .addClass(clsNames.join(' '))
+                        .attr('aria-selected', selectedDay ? 'true' : 'false')
+                        .attr('id', 'date' + currentDate.format("YYYYMMDD"))
+                        .attr('role', 'gridcell')
+                        .text(currentDate.date())
+                        );
+
                     currentDate.add(1, 'd');
                 }
 
