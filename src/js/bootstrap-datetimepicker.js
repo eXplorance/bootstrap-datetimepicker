@@ -226,7 +226,7 @@
 
                 return [
                     $('<div>').addClass('datepicker-days')
-                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-days-label')
+                        .append($('<table>').addClass('table-condensed').attr('role', 'grid').attr('aria-labelledby', 'datepicker-days-label').attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-days-label'))
                             .append($('<tbody>'))
                             ),
@@ -518,7 +518,7 @@
             },
 
             fillDow = function () {
-                var row = $('<tr role="row">'),
+                var row = $('<tr>').attr('role', 'row'),
                     currentDate = viewDate.clone().startOf('w').startOf('d');
 
                 if (options.calendarWeeks === true) {
