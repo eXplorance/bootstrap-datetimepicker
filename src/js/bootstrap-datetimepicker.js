@@ -130,6 +130,7 @@
                 46: 'delete'
             },
             keyState = {},
+            keyBindingCache = {},
 
             /********************************************************************************
              *
@@ -352,16 +353,16 @@
             getToolbar = function () {
                 var row = [];
                 if (options.showTodayButton) {
-                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'today', 'title': options.tooltips.today }).append($('<span>').addClass(options.icons.today))));
+                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'today', 'title': options.tooltips.today, 'tabindex': 0 }).append($('<span>').addClass(options.icons.today))));
                 }
                 if (!options.sideBySide && hasDate() && hasTime()) {
-                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'togglePicker', 'title': options.tooltips.selectTime }).append($('<span>').addClass(options.icons.time))));
+                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'togglePicker', 'title': options.tooltips.selectTime, 'tabindex': 0 }).append($('<span>').addClass(options.icons.time))));
                 }
                 if (options.showClear) {
-                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'clear', 'title': options.tooltips.clear }).append($('<span>').addClass(options.icons.clear))));
+                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'clear', 'title': options.tooltips.clear, 'tabindex': 0 }).append($('<span>').addClass(options.icons.clear))));
                 }
                 if (options.showClose) {
-                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'close', 'title': options.tooltips.close }).append($('<span>').addClass(options.icons.close))));
+                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'close', 'title': options.tooltips.close, 'tabindex': 0 }).append($('<span>').addClass(options.icons.close))));
                 }
                 return $('<table>').addClass('table-condensed').append($('<tbody>').append($('<tr>').append(row)));
             },
@@ -1330,10 +1331,10 @@
                 place();
                 widget.show();
                 if (options.focusOnShow && !options.inline) {
-                    widget.find('table[tabindex="0"]').eq(0).focus();
+                    widget.find('table[tabindex="0"], a[tabindex="0"]').eq(0).focus();
                 }
 
-                widget.find('table[tabindex="0"]').on({
+                widget.find('table[tabindex="0"], a[tabindex="0"]').on({
                     'keydown': keydown,
                     'keyup': keyup
                 });
@@ -1361,13 +1362,13 @@
                     keyBindKeys,
                     allModifiersPressed,
                     pressed = 'p',
-                    view,
+                    area,
                     keyBindings,
                     activeKeybindingCategories;
 
                 keyState[currentKey] = pressed;
 
-                view = {
+                area = {
                   'datepicker-days': 'date',
                   'datepicker-months': 'date',
                   'datepicker-years': 'date',
@@ -1378,6 +1379,14 @@
                   'timepicker-seconds': 'time'
                 }[$(e.target).closest("table[tabindex='0']").parent().attr('class')];
 
+                if (!area && e.target.tagName === 'INPUT') {
+                    area = 'input';
+                }
+
+                if (!area && e.target.tagName === 'A') {
+                    area = 'toolbar';
+                }
+
                 for (index in keyState) {
                     if (keyState.hasOwnProperty(index) && keyState[index] === pressed) {
                         pressedKeys.push(index);
@@ -1387,30 +1396,33 @@
                     }
                 }
 
-                activeKeybindingCategories = [];
+                keyBindings = keyBindingCache[area];
 
-                if (e.target.tagName !== 'INPUT') {
-                    activeKeybindingCategories.push(options.keyBindings.general);
-                } else {
-                    activeKeybindingCategories.push(options.keyBindings.input);
-                }
+                if (!keyBindings) {
+                    activeKeybindingCategories = [];
 
-                if (view === 'date') {
-                    activeKeybindingCategories.push(options.keyBindings.datepicker);
-                }
-
-                if (view === 'time') {
-                    activeKeybindingCategories.push(options.keyBindings.timepicker);
-                }
-
-                keyBindings = activeKeybindingCategories.reduce(function (allBindings, bindingsToAdd) {
-                    var allKeysToAdd = Object.keys(bindingsToAdd),
-                      i;
-                    for (i = 0; i < allKeysToAdd.length; i++) {
-                        allBindings[allKeysToAdd[i]] = bindingsToAdd[allKeysToAdd[i]];
+                    if (area === 'input') {
+                        activeKeybindingCategories.push(options.keyBindings.input);
+                    } else if (area) {
+                        activeKeybindingCategories.push(options.keyBindings.general);
+                        if (area === 'date') {
+                            activeKeybindingCategories.push(options.keyBindings.datepicker);
+                        } else if (area === 'time') {
+                            activeKeybindingCategories.push(options.keyBindings.timepicker);
+                        }
                     }
-                    return allBindings;
-                }, {});
+
+                    keyBindings = activeKeybindingCategories.reduce(function (allBindings, bindingsToAdd) {
+                        var allKeysToAdd = Object.keys(bindingsToAdd),
+                        i;
+                        for (i = 0; i < allKeysToAdd.length; i++) {
+                            allBindings[allKeysToAdd[i]] = bindingsToAdd[allKeysToAdd[i]];
+                        }
+                        return allBindings;
+                    }, {});
+
+                    keyBindingCache[area] = keyBindings;
+                }
 
                 for (index in keyBindings) {
                     if (keyBindings.hasOwnProperty(index) && typeof (keyBindings[index]) === 'function') {
@@ -1432,7 +1444,7 @@
                 }
 
                 if (handler) {
-                    handler.call(picker, widget);
+                    handler.call(picker, widget, e);
                     e.stopPropagation();
                     e.preventDefault();
                 }
@@ -2665,8 +2677,19 @@
                         allFocusable[--indexOfFocused].focus();
                     }
                 },
-                enter: function () {
-                    this.hide();
+                enter: function (widget, evt) {
+                    if (evt.target.tagName === 'A') {
+                        evt.target.click();
+                    } else {
+                        this.hide();
+                    }
+                },
+                space: function (widget, evt) {
+                    if (evt.target.tagName === 'A') {
+                        evt.target.click();
+                    } else {
+                        this.hide();
+                    }
                 },
                 escape: function () {
                     this.hide();
