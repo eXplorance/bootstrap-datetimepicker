@@ -1022,7 +1022,7 @@
                     date: date.clone()
                 });
 
-                if (options.focusOnShow) {
+                if (options.focusOnShow && !component) {
                     input.blur();
                 } else {
                     input.focus();
@@ -1475,7 +1475,7 @@
                     'keyup': keyup
                 });
 
-                if (element.is('input')) {
+                if (element.is('input') && options.focusOnShow) {
                     input.on({
                         'focus': show
                     });
@@ -1492,7 +1492,7 @@
                     'keyup': keyup
                 });
 
-                if (element.is('input')) {
+                if (element.is('input') && options.focusOnShow) {
                     input.off({
                         'focus': show
                     });
