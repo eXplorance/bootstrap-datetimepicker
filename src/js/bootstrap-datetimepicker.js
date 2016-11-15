@@ -1372,13 +1372,13 @@
 
                 area = {
                   'datepicker-days': 'date',
-                  'datepicker-months': 'date',
-                  'datepicker-years': 'date',
-                  'datepicker-decades': 'date',
+                  'datepicker-months': 'month',
+                  'datepicker-years': 'year',
+                  'datepicker-decades': 'decade',
                   'timepicker-picker': 'time',
-                  'timepicker-hours': 'time',
-                  'timepicker-minutes': 'time',
-                  'timepicker-seconds': 'time'
+                  'timepicker-hours': 'hour',
+                  'timepicker-minutes': 'minute',
+                  'timepicker-seconds': 'second'
                 }[$(e.target).closest("table[tabindex='0']").parent().attr('class')];
 
                 if (!area && e.target.tagName === 'INPUT') {
@@ -1407,10 +1407,8 @@
                         activeKeybindingCategories.push(options.keyBindings.input);
                     } else if (area) {
                         activeKeybindingCategories.push(options.keyBindings.general);
-                        if (area === 'date') {
-                            activeKeybindingCategories.push(options.keyBindings.datepicker);
-                        } else if (area === 'time') {
-                            activeKeybindingCategories.push(options.keyBindings.timepicker);
+                        if (area !== 'toolbar') {
+                            activeKeybindingCategories.push(options.keyBindings[area + 'picker']);
                         }
                     }
 
@@ -2763,6 +2761,42 @@
                     }
                 }
             },
+            monthpicker: {
+
+            },
+            yearpicker: {
+                up: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(4, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
+                },
+                down: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(4, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
+                },
+                left: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(1, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
+                },
+                right: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(1, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
+                }
+            },
+            decadepicker: {
+                
+            },
             timepicker: {
                 up: function (widget) {
                     var d = this.date() || this.getMoment();
@@ -2797,6 +2831,15 @@
                         widget.find('.btn[data-action="togglePeriod"]').click();
                     }
                 }
+            },
+            hourpicker: {
+
+            },
+            minutepicker: {
+                
+            },
+            secondpicker: {
+
             }
         },
         debug: false,
