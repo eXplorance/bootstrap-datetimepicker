@@ -1009,7 +1009,7 @@
                 widget.off('click', '[data-action]');
                 widget.off('mousedown', false);
 
-                widget.find('table[tabindex="0"]').off({
+                widget.find('table[tabindex="0"], a[tabindex="0"]').off({
                     'keydown': keydown,
                     'keyup': keyup
                 });
@@ -1022,7 +1022,11 @@
                     date: date.clone()
                 });
 
-                input.focus();
+                if (options.focusOnShow) {
+                    input.blur();
+                } else {
+                    input.focus();
+                }
 
                 viewDate = date.clone();
 
