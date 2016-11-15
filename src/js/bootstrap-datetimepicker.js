@@ -1585,6 +1585,8 @@
 
         picker.hide = hide;
 
+        picker.isValid = isValid;
+
         picker.disable = function () {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
             ///If the widget was visible before that call it is hidden. Possibly emits dp.hide</summary>
@@ -2708,53 +2710,89 @@
             datepicker: {
                 up: function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().subtract(7, 'd'));
+                    var newDate = d.clone().subtract(7, 'd');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
                 },
                 down: function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().add(7, 'd'));
+                    var newDate = d.clone().add(7, 'd');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
                 },
                 'control up': function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().subtract(1, 'y'));
+                    var newDate = d.clone().subtract(1, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
                 },
                 'control down': function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().add(1, 'y'));
+                    var newDate = d.clone().add(1, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
                 },
                 left: function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().subtract(1, 'd'));
+                    var newDate = d.clone().subtract(1, 'd');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
                 },
                 right: function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().add(1, 'd'));
+                    var newDate = d.clone().add(1, 'd');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
                 },
                 pageUp: function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().subtract(1, 'M'));
+                    var newDate = d.clone().subtract(1, 'M');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
                 },
                 pageDown: function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().add(1, 'M'));
+                    var newDate = d.clone().add(1, 'M');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                    }
                 }
             },
             timepicker: {
                 up: function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().add(this.stepping(), 'm'));
+                    var newDate = d.clone().add(this.stepping(), 'm');
+                    if (this.isValid(newDate, 'm')) {
+                        this.date(newDate);
+                    }
                 },
                 down: function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().subtract(this.stepping(), 'm'));
+                    var newDate = d.clone().subtract(this.stepping(), 'm');
+                    if (this.isValid(newDate, 'm')) {
+                        this.date(newDate);
+                    }
                 },
                 'control up': function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().add(1, 'h'));
+                    var newDate = d.clone().add(this.stepping(), 'h');
+                    if (this.isValid(newDate, 'h')) {
+                        this.date(newDate);
+                    }
                 },
                 'control down': function (widget) {
                     var d = this.date() || this.getMoment();
-                    this.date(d.clone().subtract(1, 'h'));
+                    var newDate = d.clone().subtract(this.stepping(), 'h');
+                    if (this.isValid(newDate, 'h')) {
+                        this.date(newDate);
+                    }
                 },
                 'control space': function (widget) {
                     if (widget.find('.btn[data-action="togglePeriod"]').is(':visible')) {
