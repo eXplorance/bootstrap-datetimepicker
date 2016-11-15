@@ -229,17 +229,17 @@
                             .append($('<tbody>'))
                             ),
                     $('<div>').addClass('datepicker-months')
-                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-months-label')
+                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-months-label').attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-months-label'))
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-years')
-                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-years-label')
+                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-years-label').attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-years-label'))
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-decades')
-                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-decades-label')
+                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-decades-label').attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-decades-label'))
                             .append(contTemplate.clone())
                             )
@@ -300,8 +300,6 @@
                         .append($('<button>').addClass('btn btn-primary').attr({ 'data-action': 'togglePeriod', tabindex: '-1', 'title': options.tooltips.togglePeriod })));
                     bottomRow.append($('<td>').addClass('separator'));
                 }
-
-
 
                 return $('<div>').addClass('timepicker-picker')
                     .append($('<table>')
@@ -1009,7 +1007,7 @@
                 widget.off('click', '[data-action]');
                 widget.off('mousedown', false);
 
-                widget.find('table[tabindex="0"], a[tabindex="0"]').off({
+                widget.find('[tabindex="0"]').off({
                     'keydown': keydown,
                     'keyup': keyup
                 });
@@ -1335,10 +1333,10 @@
                 place();
                 widget.show();
                 if (options.focusOnShow && !options.inline) {
-                    widget.find('table[tabindex="0"], a[tabindex="0"]').eq(0).focus();
+                    widget.find('[tabindex="0"]:visible').eq(0).focus();
                 }
 
-                widget.find('table[tabindex="0"], a[tabindex="0"]').on({
+                widget.find('[tabindex="0"]').on({
                     'keydown': keydown,
                     'keyup': keyup
                 });
