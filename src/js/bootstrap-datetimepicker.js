@@ -1390,17 +1390,17 @@
                 activeKeybindingCategories = [];
 
                 if (e.target.tagName !== 'INPUT') {
-                    activeKeybindingCategories.push(options.keyBinds.general);
+                    activeKeybindingCategories.push(options.keyBindings.general);
                 } else {
-                    activeKeybindingCategories.push(options.keyBinds.input);
+                    activeKeybindingCategories.push(options.keyBindings.input);
                 }
 
                 if (view === 'date') {
-                    activeKeybindingCategories.push(options.keyBinds.datepicker);
+                    activeKeybindingCategories.push(options.keyBindings.datepicker);
                 }
 
                 if (view === 'time') {
-                    activeKeybindingCategories.push(options.keyBinds.timepicker);
+                    activeKeybindingCategories.push(options.keyBindings.timepicker);
                 }
 
                 keyBindings = activeKeybindingCategories.reduce(function (allBindings, bindingsToAdd) {
@@ -2228,12 +2228,12 @@
             return picker;
         };
 
-        picker.keyBinds = function (keyBinds) {
+        picker.keyBindings = function (keyBinds) {
             if (arguments.length === 0) {
-                return options.keyBinds;
+                return options.keyBindings;
             }
 
-            options.keyBinds = keyBinds;
+            options.keyBindings = keyBinds;
             return picker;
         };
 
@@ -2632,7 +2632,7 @@
         inline: false,
         keepInvalid: false,
         datepickerInput: '.datepickerinput',
-        keyBinds: {
+        keyBindings: {
             input: {
                 down: function (widget) {
                     if (!widget) {
