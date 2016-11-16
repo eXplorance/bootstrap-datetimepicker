@@ -983,7 +983,7 @@
              */
             hide = function () {
                 var transitioning = false;
-                if (!widget) {
+                if (!widget || options.inline) {
                     return picker;
                 }
                 // Ignore event if in the middle of a picker transition
@@ -1084,6 +1084,10 @@
                         fillDate();
                     }
                     viewUpdate('M');
+
+                    if (widget) {
+                        widget.find('[tabindex="0"]:visible').eq(0).focus();
+                    }
                 },
 
                 selectYear: function (e) {
@@ -1099,6 +1103,10 @@
                         fillDate();
                     }
                     viewUpdate('YYYY');
+                    
+                    if (widget) {
+                        widget.find('[tabindex="0"]:visible').eq(0).focus();
+                    }
                 },
 
                 selectDecade: function (e) {
@@ -1114,6 +1122,10 @@
                         fillDate();
                     }
                     viewUpdate('YYYY');
+                    
+                    if (widget) {
+                        widget.find('[tabindex="0"]:visible').eq(0).focus();
+                    }
                 },
 
                 selectDay: function (e) {
@@ -1210,22 +1222,26 @@
 
                 showPicker: function () {
                     widget.find('.timepicker > div:not(.timepicker-picker)').hide().attr('aria-hidden', true);
-                    widget.find('.timepicker .timepicker-picker').show().attr('aria-hidden', false);
+                    widget.find('.timepicker .timepicker-picker').show().attr('aria-hidden', false)
+                        .find('[tabindex="0"]').focus();
                 },
 
                 showHours: function () {
                     widget.find('.timepicker .timepicker-picker').hide().attr('aria-hidden', true);
-                    widget.find('.timepicker .timepicker-hours').show().attr('aria-hidden', false);
+                    widget.find('.timepicker .timepicker-hours').show().attr('aria-hidden', false)
+                        .find('[tabindex="0"]').focus();
                 },
 
                 showMinutes: function () {
                     widget.find('.timepicker .timepicker-picker').hide().attr('aria-hidden', true);
-                    widget.find('.timepicker .timepicker-minutes').show().attr('aria-hidden', false);
+                    widget.find('.timepicker .timepicker-minutes').show().attr('aria-hidden', false)
+                        .find('[tabindex="0"]').focus();
                 },
 
                 showSeconds: function () {
                     widget.find('.timepicker .timepicker-picker').hide().attr('aria-hidden', true);
-                    widget.find('.timepicker .timepicker-seconds').show().attr('aria-hidden', false);
+                    widget.find('.timepicker .timepicker-seconds').show().attr('aria-hidden', false)
+                        .find('[tabindex="0"]').focus();
                 },
 
                 selectHour: function (e) {
@@ -1443,8 +1459,7 @@
                     }
                 }
 
-                if (handler) {
-                    handler.call(picker, widget, e);
+                if (handler && handler.call(picker, widget, e)) {
                     e.stopPropagation();
                     e.preventDefault();
                 }
@@ -2649,13 +2664,20 @@
         keyBindings: {
             input: {
                 down: function (widget) {
+                    console.log(widget);
                     if (!widget) {
                         this.show();
+                        return true;
                     }
+                    return false;
                 }
             },
             general: { //When in either date picker or time picker
                 tab: function (widget) {
+                    if (this.inline()) {
+                        return false;
+                    }
+
                     var allFocusable = widget.find('[tabindex="0"]').filter(function (idx, focusable) { return $(focusable).is(':visible'); }),
                         currentlyInFocus = allFocusable.filter(function (idx, focusable) { return $(focusable).is(':focus'); }),
                         indexOfFocused = allFocusable.index(currentlyInFocus);
@@ -2663,11 +2685,15 @@
                     //circle around - don't let focus leave the date/time picker
                     if (indexOfFocused === allFocusable.length - 1) {
                         allFocusable[0].focus();
-                    } else {
-                        allFocusable[++indexOfFocused].focus();
+                        return true;
                     }
+                    return false;
                 },
                 'shift tab': function (widget) {
+                    if (this.inline()) {
+                        return false;
+                    }
+
                     var allFocusable = widget.find('[tabindex="0"]').filter(function (idx, focusable) { return $(focusable).is(':visible'); }),
                         currentlyInFocus = allFocusable.filter(function (idx, focusable) { return $(focusable).is(':focus'); }),
                         indexOfFocused = allFocusable.index(currentlyInFocus);
@@ -2675,9 +2701,9 @@
                     //circle around - don't let focus leave the date/time picker
                     if (indexOfFocused === 0) {
                         allFocusable[allFocusable.length - 1].focus();
-                    } else {
-                        allFocusable[--indexOfFocused].focus();
+                        return true;
                     }
+                    return false;
                 },
                 enter: function (widget, evt) {
                     if (evt.target.tagName === 'A') {
@@ -2685,6 +2711,7 @@
                     } else {
                         this.hide();
                     }
+                    return true;
                 },
                 space: function (widget, evt) {
                     if (evt.target.tagName === 'A') {
@@ -2692,15 +2719,19 @@
                     } else {
                         this.hide();
                     }
+                    return true;
                 },
                 escape: function () {
                     this.hide();
+                    return true;
                 },
                 t: function () {
                     this.date(this.getMoment());
+                    return true;
                 },
                 'delete': function () {
                     this.clear();
+                    return true;
                 }
             },
             datepicker: {
@@ -2709,60 +2740,119 @@
                     var newDate = d.clone().subtract(7, 'd');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 down: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().add(7, 'd');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 'control up': function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().subtract(1, 'y');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 'control down': function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().add(1, 'y');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 left: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().subtract(1, 'd');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 right: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().add(1, 'd');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 pageUp: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().subtract(1, 'M');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 pageDown: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().add(1, 'M');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 }
             },
             monthpicker: {
-
+                up: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(4, 'M');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                down: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(4, 'M');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                left: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(1, 'M');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                right: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(1, 'M');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                enter: function (widget) {
+                    widget.find('.datepicker-months .active').click();
+                    return true;
+                },
+                space: function (widget) {
+                    widget.find('.datepicker-months .active').click();
+                    return true;
+                }
             },
             yearpicker: {
                 up: function (widget) {
@@ -2770,32 +2860,91 @@
                     var newDate = d.clone().subtract(4, 'y');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 down: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().add(4, 'y');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 left: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().subtract(1, 'y');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 right: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().add(1, 'y');
                     if (this.isValid(newDate, 'd')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
+                },
+                enter: function (widget) {
+                    widget.find('.datepicker-years .active').click();
+                    return true;
+                },
+                space: function (widget) {
+                    widget.find('.datepicker-years .active').click();
+                    return true;
                 }
             },
             decadepicker: {
-                
+                up: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(48, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                down: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(48, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                left: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(12, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                right: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(12, 'y');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                enter: function (widget) {
+                    widget.find('.datepicker-decades .active').click();
+                    return true;
+                },
+                space: function (widget) {
+                    widget.find('.datepicker-decades .active').click();
+                    return true;
+                }
             },
             timepicker: {
                 up: function (widget) {
@@ -2803,33 +2952,43 @@
                     var newDate = d.clone().add(this.stepping(), 'm');
                     if (this.isValid(newDate, 'm')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 down: function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().subtract(this.stepping(), 'm');
                     if (this.isValid(newDate, 'm')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 'control up': function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().add(this.stepping(), 'h');
                     if (this.isValid(newDate, 'h')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 'control down': function (widget) {
                     var d = this.date() || this.getMoment();
                     var newDate = d.clone().subtract(this.stepping(), 'h');
                     if (this.isValid(newDate, 'h')) {
                         this.date(newDate);
+                        return true;
                     }
+                    return false;
                 },
                 'control space': function (widget) {
                     if (widget.find('.btn[data-action="togglePeriod"]').is(':visible')) {
                         widget.find('.btn[data-action="togglePeriod"]').click();
+                        return true;
                     }
+                    return false;
                 }
             },
             hourpicker: {
