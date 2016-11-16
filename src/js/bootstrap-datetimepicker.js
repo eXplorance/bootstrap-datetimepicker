@@ -1337,7 +1337,9 @@
                         $parent = $this.closest('ul'),
                         expanded = $parent.find('.in'),
                         closed = $parent.find('.collapse:not(.in)'),
-                        collapseData;
+                        collapseData,
+                        $iconContainer,
+                        hasTimeClasses;
 
                     if (expanded && expanded.length) {
                         collapseData = expanded.data('collapse');
@@ -1351,10 +1353,24 @@
                             expanded.removeClass('in');
                             closed.addClass('in');
                         }
-                        if ($this.is('span')) {
-                            $this.toggleClass(options.icons.time + ' ' + options.icons.date);
+
+                        $iconContainer = $this.is('span') ? $this : $this.find('span');
+                        $iconContainer.toggleClass(options.icons.time + ' ' + options.icons.date);
+
+                        hasTimeClasses = !(options.icons.time || '').split(' ').some(function (cls) {
+                            return !$iconContainer.hasClass(cls);
+                        });
+                        
+                        if (hasTimeClasses) {
+                            $iconContainer.parent().attr({
+                                'title': options.tooltips.selectTime,
+                                'aria-label': options.tooltips.selectTime
+                            });
                         } else {
-                            $this.find('span').toggleClass(options.icons.time + ' ' + options.icons.date);
+                            $iconContainer.parent().attr({
+                                'title': options.tooltips.selectDate,
+                                'aria-label': options.tooltips.selectDate
+                            });
                         }
 
                         // NOTE: uncomment if toggled state will be restored in show()
@@ -2784,7 +2800,8 @@
             incrementSecond: 'Increment Second',
             decrementSecond: 'Decrement Second',
             togglePeriod: 'Toggle Period',
-            selectTime: 'Select Time'
+            selectTime: 'Select Time',
+            selectDate: 'Select Date'
         },
         useStrict: false,
         sideBySide: false,
