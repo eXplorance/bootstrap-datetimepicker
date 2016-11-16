@@ -833,7 +833,8 @@
                 var table = widget.find('.timepicker-hours table'),
                     currentHour = viewDate.clone().startOf('d'),
                     html = [],
-                    row = $('<tr>');
+                    row = $('<tr>'),
+                    clsNames = [];
 
                 if (viewDate.hour() > 11 && !use24Hours) {
                     currentHour.hour(12);
@@ -843,7 +844,18 @@
                         row = $('<tr>');
                         html.push(row);
                     }
-                    row.append('<td data-action="selectHour" class="hour' + (!isValid(currentHour, 'h') ? ' disabled' : '') + '">' + currentHour.format(use24Hours ? 'HH' : 'hh') + '</td>');
+
+                    clsNames.push('hour');
+                    if (!isValid(currentHour, 'h')) {
+                        clsNames.push('disabled');
+                    }
+
+                    row.append($('<td>')
+                        .attr('data-action', 'selectHour')
+                        .addClass(clsNames.join(' '))
+                        .toggleClass('active', viewDate.hour() === currentHour.hour())
+                        .text(currentHour.format(use24Hours ? 'HH' : 'hh'))
+                        );
                     currentHour.add(1, 'h');
                 }
                 table.empty().append(html);
@@ -2991,7 +3003,50 @@
                 }
             },
             hourpicker: {
-
+                up: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(4, 'h');
+                    if (this.isValid(newDate, 'h')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                down: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(4, 'h');
+                    if (this.isValid(newDate, 'h')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                left: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(1, 'h');
+                    if (this.isValid(newDate, 'h')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                right: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(1, 'h');
+                    if (this.isValid(newDate, 'h')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                enter: function (widget) {
+                    widget.find('.timepicker-hours .active').click();
+                    return true;
+                },
+                space: function (widget) {
+                    widget.find('.timepicker-hours .active').click();
+                    return true;
+                }
             },
             minutepicker: {
                 
