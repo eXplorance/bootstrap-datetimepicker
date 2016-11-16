@@ -351,22 +351,74 @@
             getToolbar = function () {
                 var row = [];
                 if (options.showTodayButton) {
-                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'today', 'title': options.tooltips.today, 'tabindex': 0 }).append($('<span>').addClass(options.icons.today))));
+                    row.push($('<td>').
+                        append($('<a>')
+                            .attr({
+                                'data-action': 'today',
+                                'title': options.tooltips.today,
+                                'aria-label': options.tooltips.today,
+                                'tabindex': 0,
+                                'role': 'button'
+                            })
+                            .append($('<span>')
+                                .addClass(options.icons.today)
+                                )
+                            )
+                        );
                 }
                 if (!options.sideBySide && hasDate() && hasTime()) {
-                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'togglePicker', 'title': options.tooltips.selectTime, 'tabindex': 0 }).append($('<span>').addClass(options.icons.time))));
+                    row.push($('<td>')
+                        .append($('<a>')
+                            .attr({
+                                'data-action': 'togglePicker',
+                                'title': options.tooltips.selectTime,
+                                'aria-label': options.tooltips.selectTime,
+                                'tabindex': 0,
+                                'role': 'button'
+                            })
+                            .append($('<span>')
+                                .addClass(options.icons.time)
+                                )
+                            )
+                        );
                 }
                 if (options.showClear) {
-                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'clear', 'title': options.tooltips.clear, 'tabindex': 0 }).append($('<span>').addClass(options.icons.clear))));
+                    row.push($('<td>')
+                        .append($('<a>')
+                            .attr({
+                                'data-action': 'clear',
+                                'title': options.tooltips.clear,
+                                'aria-label': options.tooltips.clear,
+                                'tabindex': 0,
+                                'role': 'button'
+                            })
+                            .append($('<span>')
+                                .addClass(options.icons.clear)
+                                )
+                            )
+                        );
                 }
                 if (options.showClose) {
-                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'close', 'title': options.tooltips.close, 'tabindex': 0 }).append($('<span>').addClass(options.icons.close))));
+                    row.push($('<td>')
+                        .append($('<a>')
+                            .attr({
+                                'data-action': 'close',
+                                'title': options.tooltips.close,
+                                'aria-label': options.tooltips.close,
+                                'tabindex': 0,
+                                'role': 'button'
+                            })
+                            .append($('<span>')
+                                .addClass(options.icons.close)
+                                )
+                            )
+                        );
                 }
                 return $('<table>').addClass('table-condensed').append($('<tbody>').append($('<tr>').append(row)));
             },
 
             getTemplate = function () {
-                var template = $('<div>').addClass('bootstrap-datetimepicker-widget dropdown-menu'),
+                var template = $('<div>').addClass('bootstrap-datetimepicker-widget dropdown-menu').attr('role', 'application'),
                     dateView = $('<div>').addClass('datepicker').append(getDatePickerTemplate()),
                     timeView = $('<div>').addClass('timepicker').append(getTimePickerTemplate()),
                     content = $('<ul>').addClass('list-unstyled'),
@@ -1406,7 +1458,8 @@
                     pressed = 'p',
                     area,
                     keyBindings,
-                    activeKeybindingCategories;
+                    activeKeybindingCategories,
+                    $target = $(e.target);
 
                 keyState[currentKey] = pressed;
 
@@ -1419,13 +1472,13 @@
                   'timepicker-hours': 'hour',
                   'timepicker-minutes': 'minute',
                   'timepicker-seconds': 'second'
-                }[$(e.target).closest("table[tabindex='0']").parent().attr('class')];
+                }[$target.closest("table[tabindex='0']").parent().attr('class')];
 
-                if (!area && e.target.tagName === 'INPUT') {
+                if (!area && $target.is('input')) {
                     area = 'input';
                 }
 
-                if (!area && e.target.tagName === 'A') {
+                if (!area && $target.is('a')) {
                     area = 'toolbar';
                 }
 
