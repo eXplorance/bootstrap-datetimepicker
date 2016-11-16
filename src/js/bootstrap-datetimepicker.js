@@ -833,8 +833,7 @@
                 var table = widget.find('.timepicker-hours table'),
                     currentHour = viewDate.clone().startOf('d'),
                     html = [],
-                    row = $('<tr>'),
-                    clsNames = [];
+                    row = $('<tr>');
 
                 if (viewDate.hour() > 11 && !use24Hours) {
                     currentHour.hour(12);
@@ -845,15 +844,12 @@
                         html.push(row);
                     }
 
-                    clsNames.push('hour');
-                    if (!isValid(currentHour, 'h')) {
-                        clsNames.push('disabled');
-                    }
-
                     row.append($('<td>')
                         .attr('data-action', 'selectHour')
-                        .addClass(clsNames.join(' '))
+                        .addClass('hour')
+                        .toggleClass('disabled', !isValid(currentHour, 'h'))
                         .toggleClass('active', viewDate.hour() === currentHour.hour())
+                        .attr('aria-selected', viewDate.hour() === currentHour.hour())
                         .text(currentHour.format(use24Hours ? 'HH' : 'hh'))
                         );
                     currentHour.add(1, 'h');
@@ -866,8 +862,7 @@
                     currentMinute = viewDate.clone().startOf('h'),
                     html = [],
                     row = $('<tr>'),
-                    step = options.stepping === 1 ? 5 : options.stepping,
-                    clsNames = [];
+                    step = options.stepping === 1 ? 5 : options.stepping;
 
                 while (viewDate.isSame(currentMinute, 'h')) {
                     if (currentMinute.minute() % (step * 4) === 0) {
@@ -875,15 +870,12 @@
                         html.push(row);
                     }
 
-                    clsNames.push('minute');
-                    if (!isValid(currentMinute, 'm')) {
-                        clsNames.push('disabled');
-                    }
-
                     row.append($('<td>')
                         .attr('data-action', 'selectMinute')
-                        .addClass(clsNames.join(' '))
+                        .addClass('minute')
+                        .toggleClass('disabled', !isValid(currentMinute, 'm'))
                         .toggleClass('active', viewDate.minute() === currentMinute.minute())
+                        .attr('aria-selected', viewDate.minute() === currentMinute.minute())
                         .text(currentMinute.format('mm'))
                         )
                     currentMinute.add(step, 'm');
@@ -902,7 +894,15 @@
                         row = $('<tr>');
                         html.push(row);
                     }
-                    row.append('<td data-action="selectSecond" class="second' + (!isValid(currentSecond, 's') ? ' disabled' : '') + '">' + currentSecond.format('ss') + '</td>');
+
+                    row.append($('<td>')
+                        .attr('data-action', 'selectSecond')
+                        .addClass('second')
+                        .toggleClass('disabled', !isValid(currentSecond, 's'))
+                        .toggleClass('active', viewDate.second() === currentSecond.second())
+                        .attr('aria-selected', viewDate.second() === currentSecond.second())
+                        .text(currentSecond.format('ss'))
+                        );
                     currentSecond.add(5, 's');
                 }
 
@@ -3111,7 +3111,50 @@
                 }
             },
             secondpicker: {
-
+                up: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(20 + (d.second() % 5), 's');
+                    if (this.isValid(newDate, 's')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                down: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(20 + (d.second() % 5), 's');
+                    if (this.isValid(newDate, 's')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                left: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().subtract(5 + (d.second() % 5), 's');
+                    if (this.isValid(newDate, 's')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                right: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var newDate = d.clone().add(5 + (d.second() % 5), 's');
+                    if (this.isValid(newDate, 's')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                enter: function (widget) {
+                    widget.find('.timepicker-seconds .active').click();
+                    return true;
+                },
+                space: function (widget) {
+                    widget.find('.timepicker-seconds .active').click();
+                    return true;
+                }
             }
         },
         debug: false,
