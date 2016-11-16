@@ -212,9 +212,7 @@
                             .append($('<span>')
                                 .addClass('hidden')
                                 .attr('id', labelId)
-                                .attr('aria-live', 'assertive')
-                                .attr('aria-atomic', 'true')
-                                .attr('aria-role', 'presentation')
+                                .attr('role', 'presentation')
                                 )
                             )
                         .append($('<th>').addClass('next').attr('data-action', 'next')
@@ -231,22 +229,47 @@
 
                 return [
                     $('<div>').addClass('datepicker-days')
-                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-days-label').attr('tabindex', 0).attr('role', 'group')
+                        .append($('<table>')
+                            .addClass('table-condensed')
+                            .attr('aria-labelledby', 'datepicker-days-label')
+                            .attr('aria-controls', 'datepicker-days-label')
+                            .attr('aria-live', 'assertive')
+                            .attr('aria-atomic', 'true')
+                            .attr('tabindex', 0)
+                            .attr('role', 'group')
                             .append(getHeadTemplate('datepicker-days-label'))
                             .append($('<tbody>'))
                             ),
                     $('<div>').addClass('datepicker-months')
-                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-months-label').attr('tabindex', 0)
+                        .append($('<table>')
+                            .addClass('table-condensed')
+                            .attr('aria-labelledby', 'datepicker-months-label')
+                            .attr('aria-controls', 'datepicker-months-label')
+                            .attr('aria-live', 'assertive')
+                            .attr('aria-atomic', 'true')
+                            .attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-months-label'))
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-years')
-                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-years-label').attr('tabindex', 0)
+                        .append($('<table>')
+                            .addClass('table-condensed')
+                            .attr('aria-labelledby', 'datepicker-years-label')
+                            .attr('aria-controls', 'datepicker-years-label')
+                            .attr('aria-live', 'assertive')
+                            .attr('aria-atomic', 'true')
+                            .attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-years-label'))
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-decades')
-                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-decades-label').attr('tabindex', 0)
+                        .append($('<table>')
+                            .addClass('table-condensed')
+                            .attr('aria-labelledby', 'datepicker-decades-label')
+                            .attr('aria-controls', 'datepicker-decades-label')
+                            .attr('aria-live', 'assertive')
+                            .attr('aria-atomic', 'true')
+                            .attr('tabindex', 0)
                             .append(getHeadTemplate('datepicker-decades-label'))
                             .append(contTemplate.clone())
                             )
@@ -256,15 +279,13 @@
             getTimePickerMainTemplate = function () {
                 var topRow = $('<tr>'),
                     middleRow = $('<tr>'),
-                    bottomRow = $('<tr>'),
-                    labelledby = [];
+                    bottomRow = $('<tr>');
 
                 if (isEnabled('h')) {
-                    labelledby.push('timepicker-hour-label');
                     topRow.append($('<td>')
                         .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementHour }).addClass('btn').attr('data-action', 'incrementHours').append($('<span>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
-                        .append($('<span>').addClass('timepicker-hour').attr('id', 'timepicker-hour-label').attr({ 'data-time-component': 'hours', 'title': options.tooltips.pickHour }).attr('data-action', 'showHours')));
+                        .append($('<span>').addClass('timepicker-hour').attr({ 'data-time-component': 'hours', 'title': options.tooltips.pickHour }).attr('data-action', 'showHours')));
                     bottomRow.append($('<td>')
                         .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementHour }).addClass('btn').attr('data-action', 'decrementHours').append($('<span>').addClass(options.icons.down))));
                 }
@@ -274,12 +295,11 @@
                         middleRow.append($('<td>').addClass('separator').html(':'));
                         bottomRow.append($('<td>').addClass('separator'));
                     }
-                    labelledby.push('timepicker-minute-label');
                     topRow.append($('<td>')
                         .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementMinute }).addClass('btn').attr('data-action', 'incrementMinutes')
                             .append($('<span>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
-                        .append($('<span>').addClass('timepicker-minute').attr('id', 'timepicker-minute-label').attr({ 'data-time-component': 'minutes', 'title': options.tooltips.pickMinute }).attr('data-action', 'showMinutes')));
+                        .append($('<span>').addClass('timepicker-minute').attr({ 'data-time-component': 'minutes', 'title': options.tooltips.pickMinute }).attr('data-action', 'showMinutes')));
                     bottomRow.append($('<td>')
                         .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementMinute }).addClass('btn').attr('data-action', 'decrementMinutes')
                             .append($('<span>').addClass(options.icons.down))));
@@ -290,12 +310,11 @@
                         middleRow.append($('<td>').addClass('separator').html(':'));
                         bottomRow.append($('<td>').addClass('separator'));
                     }
-                    labelledby.push('timepicker-second-label');
                     topRow.append($('<td>')
                         .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementSecond }).addClass('btn').attr('data-action', 'incrementSeconds')
                             .append($('<span>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
-                        .append($('<span>').addClass('timepicker-second').attr('id', 'timepicker-second-label').attr({ 'data-time-component': 'seconds', 'title': options.tooltips.pickSecond }).attr('data-action', 'showSeconds')));
+                        .append($('<span>').addClass('timepicker-second').attr({ 'data-time-component': 'seconds', 'title': options.tooltips.pickSecond }).attr('data-action', 'showSeconds')));
                     bottomRow.append($('<td>')
                         .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementSecond }).addClass('btn').attr('data-action', 'decrementSeconds')
                             .append($('<span>').addClass(options.icons.down))));
@@ -311,33 +330,50 @@
                 return $('<div>').addClass('timepicker-picker')
                     .append($('<table>')
                         .addClass('table-condensed')
-                        .attr('aria-labelledby', labelledby.join(' '))
+                        .attr('aria-labelledby', 'timepicker-time-label')
+                        .attr('aria-controls', 'timepicker-time-label')
                         .attr('aria-live', 'assertive')
                         .attr('aria-atomic', 'true')
+                        .attr('role', 'group')
                         .attr('tabindex', 0)
-                        .append([topRow, middleRow, bottomRow]));
+                        .append($('<thead>')
+                            .append($('<tr>')
+                                .addClass('hidden')
+                                .append($('<th>')
+                                    .attr('colspan', topRow.children().length)
+                                    .append($('<span>')
+                                        .attr('id', 'timepicker-time-label')
+                                        .attr('role', 'presentation')
+                                        )
+                                    )
+                                )
+                            )
+                        .append($('<tbody>')
+                            .append([topRow, middleRow, bottomRow])
+                            )
+                        );
             },
 
             getTimePickerTemplate = function () {
                 var hoursView = $('<div>').addClass('timepicker-hours')
                         .append($('<table>')
                             .addClass('table-condensed')
-                            .attr('id', 'timepicker-hours-label')
-                            .attr('aria-labelledby', 'timepicker-hours-label')
+                            .attr('aria-labelledby', 'timepicker-time-label')
+                            .attr('role', 'group')
                             .attr('tabindex', 0)
                             ),
                     minutesView = $('<div>').addClass('timepicker-minutes')
                         .append($('<table>')
                             .addClass('table-condensed')
-                            .attr('aria-labelledby', 'timepicker-minutes-label')
-                            .attr('id', 'timepicker-minutes-label')
+                            .attr('aria-labelledby', 'timepicker-time-label')
+                            .attr('role', 'group')
                             .attr('tabindex', 0)
                             ),
                     secondsView = $('<div>').addClass('timepicker-seconds')
                         .append($('<table>')
                             .addClass('table-condensed')
-                            .attr('aria-labelledby', 'timepicker-seconds-label')
-                            .attr('id', 'timepicker-seconds-label')
+                            .attr('aria-labelledby', 'timepicker-time-label')
+                            .attr('role', 'group')
                             .attr('tabindex', 0)
                             ),
                     ret = [getTimePickerMainTemplate()];
@@ -970,7 +1006,12 @@
             },
 
             fillTime = function () {
-                var toggle, newDate, timeComponents = widget.find('.timepicker span[data-time-component]');
+                var toggle,
+                    newDate,
+                    timeComponents = widget.find('.timepicker span[data-time-component]'),
+                    $timeLabel = widget.find('.timepicker-picker #timepicker-time-label'),
+                    timeLabel = null,
+                    timeLabelParts = [];
 
                 if (!use24Hours) {
                     toggle = widget.find('.timepicker [data-action=togglePeriod]');
@@ -987,6 +1028,25 @@
                 timeComponents.filter('[data-time-component=hours]').text(date.format(use24Hours ? 'HH' : 'hh'));
                 timeComponents.filter('[data-time-component=minutes]').text(date.format('mm'));
                 timeComponents.filter('[data-time-component=seconds]').text(date.format('ss'));
+
+                if (hasTime()) {
+                    if (isEnabled('h')) {
+                        timeLabelParts.push(date.format(use24Hours ? 'HH' : 'hh'));
+                    }
+                    if (isEnabled('m')) {
+                        timeLabelParts.push(date.format('mm'));
+                    }
+                    if (isEnabled('s')) {
+                        timeLabelParts.push(date.format('s'));
+                    }
+
+                    timeLabel = timeLabelParts.join(':');
+                    if (!use24Hours) {
+                        timeLabel += ' ' + date.format('A');
+                    }
+
+                    $timeLabel.text(timeLabel);
+                }
 
                 fillHours();
                 fillMinutes();
