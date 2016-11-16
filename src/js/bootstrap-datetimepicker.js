@@ -206,9 +206,16 @@
                             .addClass('picker-switch')
                             .attr('colspan', (options.calendarWeeks ? '6' : '5'))
                             .attr('data-action', 'pickerSwitch')
-                            .attr('id', labelId)
-                            .attr('aria-live', 'assertive')
-                            .attr('aria-atomic', 'true')
+                            .append($('<span>')
+                                .addClass('picker-switch-label')
+                                )
+                            .append($('<span>')
+                                .addClass('hidden')
+                                .attr('id', labelId)
+                                .attr('aria-live', 'assertive')
+                                .attr('aria-atomic', 'true')
+                                .attr('aria-role', 'presentation')
+                                )
                             )
                         .append($('<th>').addClass('next').attr('data-action', 'next')
                             .append($('<span>').addClass(options.icons.next))
@@ -224,7 +231,7 @@
 
                 return [
                     $('<div>').addClass('datepicker-days')
-                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-days-label').attr('tabindex', 0)
+                        .append($('<table>').addClass('table-condensed').attr('aria-labelledby', 'datepicker-days-label').attr('tabindex', 0).attr('role', 'group')
                             .append(getHeadTemplate('datepicker-days-label'))
                             .append($('<tbody>'))
                             ),
@@ -803,11 +810,12 @@
                 }
 
                 daysViewHeader.eq(0).find('span').attr('title', options.tooltips.prevMonth);
-                daysViewHeader.eq(1).attr('title', options.tooltips.selectMonth);
+                daysViewHeader.eq(1).find('span.picker-switch-label').attr('title', options.tooltips.selectMonth);
                 daysViewHeader.eq(2).find('span').attr('title', options.tooltips.nextMonth);
 
                 daysView.find('.disabled').removeClass('disabled');
-                daysViewHeader.eq(1).text(viewDate.format(options.dayViewHeaderFormat));
+                daysViewHeader.eq(1).find('span.picker-switch-label').text(viewDate.format(options.dayViewHeaderFormat));
+                daysViewHeader.eq(1).find('span.hidden').text(viewDate.format(options.dayViewHeaderFormat) + ', ' + viewDate.format('D'));
 
                 if (!unset) {
                     datePickerTable = daysView.find('table');
