@@ -866,14 +866,26 @@
                     currentMinute = viewDate.clone().startOf('h'),
                     html = [],
                     row = $('<tr>'),
-                    step = options.stepping === 1 ? 5 : options.stepping;
+                    step = options.stepping === 1 ? 5 : options.stepping,
+                    clsNames = [];
 
                 while (viewDate.isSame(currentMinute, 'h')) {
                     if (currentMinute.minute() % (step * 4) === 0) {
                         row = $('<tr>');
                         html.push(row);
                     }
-                    row.append('<td data-action="selectMinute" class="minute' + (!isValid(currentMinute, 'm') ? ' disabled' : '') + '">' + currentMinute.format('mm') + '</td>');
+
+                    clsNames.push('minute');
+                    if (!isValid(currentMinute, 'm')) {
+                        clsNames.push('disabled');
+                    }
+
+                    row.append($('<td>')
+                        .attr('data-action', 'selectMinute')
+                        .addClass(clsNames.join(' '))
+                        .toggleClass('active', viewDate.minute() === currentMinute.minute())
+                        .text(currentMinute.format('mm'))
+                        )
                     currentMinute.add(step, 'm');
                 }
                 table.empty().append(html);
@@ -3049,7 +3061,54 @@
                 }
             },
             minutepicker: {
-                
+                up: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var step = this.stepping() === 1 ? 5 : this.stepping();
+                    var newDate = d.clone().subtract((step * 4) + (d.minute() % step), 'm');
+                    if (this.isValid(newDate, 'm')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                down: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var step = this.stepping() === 1 ? 5 : this.stepping();
+                    var newDate = d.clone().add((step * 4) + (d.minute() % step), 'm');
+                    if (this.isValid(newDate, 'm')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                left: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var step = this.stepping() === 1 ? 5 : this.stepping();
+                    var newDate = d.clone().subtract(step + (d.minute() % step), 'm');
+                    if (this.isValid(newDate, 'm')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                right: function (widget) {
+                    var d = this.date() || this.getMoment();
+                    var step = this.stepping() === 1 ? 5 : this.stepping();
+                    var newDate = d.clone().add(step + (d.minute() % step), 'm');
+                    if (this.isValid(newDate, 'm')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                enter: function (widget) {
+                    widget.find('.timepicker-minutes .active').click();
+                    return true;
+                },
+                space: function (widget) {
+                    widget.find('.timepicker-minutes .active').click();
+                    return true;
+                }
             },
             secondpicker: {
 
