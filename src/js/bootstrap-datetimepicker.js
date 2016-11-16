@@ -2664,7 +2664,6 @@
         keyBindings: {
             input: {
                 down: function (widget) {
-                    console.log(widget);
                     if (!widget) {
                         this.show();
                         return true;
