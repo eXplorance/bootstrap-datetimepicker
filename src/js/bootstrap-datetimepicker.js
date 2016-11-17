@@ -1581,11 +1581,11 @@
                     activeKeybindingCategories = [];
 
                     if (area === 'input') {
-                        activeKeybindingCategories.push(options.keyBindings.input);
+                        activeKeybindingCategories.push(options.keyBinds.input);
                     } else if (area) {
-                        activeKeybindingCategories.push(options.keyBindings.general);
+                        activeKeybindingCategories.push(options.keyBinds.general);
                         if (area !== 'toolbar') {
-                            activeKeybindingCategories.push(options.keyBindings[area + 'picker']);
+                            activeKeybindingCategories.push(options.keyBinds[area + 'picker']);
                         }
                     }
 
@@ -2418,12 +2418,12 @@
             return picker;
         };
 
-        picker.keyBindings = function (keyBinds) {
+        picker.keyBinds = function (keyBinds) {
             if (arguments.length === 0) {
-                return options.keyBindings;
+                return options.keyBinds;
             }
 
-            options.keyBindings = keyBinds;
+            options.keyBinds = keyBinds;
             return picker;
         };
 
@@ -2823,7 +2823,7 @@
         inline: false,
         keepInvalid: false,
         datepickerInput: '.datepickerinput',
-        keyBindings: {
+        keyBinds: {
             input: {
                 down: function (widget) {
                     if (!widget) {
