@@ -63,13 +63,16 @@ describe('Public API method tests', function () {
         dpChangeSpy,
         dpShowSpy,
         dpHideSpy,
-        dpErrorSpy;
+        dpErrorSpy,
+        dpClassifySpy,
+        dpHelper = window.dpHelper;
 
     beforeEach(function () {
         dpChangeSpy = jasmine.createSpy('dp.change event Spy');
         dpShowSpy = jasmine.createSpy('dp.show event Spy');
         dpHideSpy = jasmine.createSpy('dp.hide event Spy');
         dpErrorSpy = jasmine.createSpy('dp.error event Spy');
+        dpClassifySpy = jasmine.createSpy('dp.classify event Spy');
         dtpElement = $('<input>').attr('id', 'dtp');
 
         $(document).find('body').append($('<div>').attr('class', 'row').append($('<div>').attr('class', 'col-md-12').append(dtpElement)));
@@ -77,6 +80,7 @@ describe('Public API method tests', function () {
         $(document).find('body').on('dp.show', dpShowSpy);
         $(document).find('body').on('dp.hide', dpHideSpy);
         $(document).find('body').on('dp.error', dpErrorSpy);
+        $(document).find('body').on('dp.classify', dpClassifySpy);
 
         dtpElement.datetimepicker();
         dtp = dtpElement.data('DateTimePicker');
@@ -290,9 +294,28 @@ describe('Public API method tests', function () {
                 expect(dpShowSpy).not.toHaveBeenCalled();
             });
 
+            it('calls the classify event for each day that is shown', function () {
+                dtp.show();
+                expect(dpClassifySpy.calls.count()).toEqual(42);
+            });
+
             it('actually shows the widget', function () {
                 dtp.show();
                 expect($(document).find('body').find('.bootstrap-datetimepicker-widget').length).toEqual(1);
+            });
+
+            it('applies the styles appended in the classify event handler', function () {
+                var handler = function (event) {
+                    if (event.date.get('weekday') === 4) {
+                        event.classNames.push('humpday');
+                    }
+                    event.classNames.push('injected');
+                };
+                $(document).find('body').on('dp.classify', handler);
+                dtp.show();
+                $(document).find('body').off('dp.classify', handler);
+                expect($(document).find('body').find('.bootstrap-datetimepicker-widget td.day.injected').length).toEqual(42);
+                expect($(document).find('body').find('.bootstrap-datetimepicker-widget td.day.humpday').length).toEqual(6);
             });
         });
 
@@ -318,6 +341,12 @@ describe('Public API method tests', function () {
             });
 
             it('does not emit a hide event when called while widget is hidden', function () {
+                dtp.hide();
+                expect(dpHideSpy).not.toHaveBeenCalled();
+            });
+
+            it('does not emit a hide event when widget is inline', function () {
+                dtp.inline(true);
                 dtp.hide();
                 expect(dpHideSpy).not.toHaveBeenCalled();
             });
@@ -1168,5 +1197,293 @@ describe('Public API method tests', function () {
         makeFormatTest('YYYY-MM-DD HH:mm:ss', 'UTC');
         makeFormatTest('YYYY-MM-DD HH:mm:ss Z', 'America/New_York');
         makeFormatTest('YYYY-MM-DD HH:mm:ss', 'America/New_York');
+    });
+
+    describe('Default keybinds tests', function () {
+        it('should contain all contexts', function () {
+            var defaultKeyBinds = dtp.keyBinds();
+
+            expect(defaultKeyBinds.input).toBeDefined();
+            expect(defaultKeyBinds.datepicker).toBeDefined();
+            expect(defaultKeyBinds.monthpicker).toBeDefined();
+            expect(defaultKeyBinds.yearpicker).toBeDefined();
+            expect(defaultKeyBinds.decadepicker).toBeDefined();
+            expect(defaultKeyBinds.timepicker).toBeDefined();
+            expect(defaultKeyBinds.hourpicker).toBeDefined();
+            expect(defaultKeyBinds.minutepicker).toBeDefined();
+            expect(defaultKeyBinds.secondpicker).toBeDefined();
+        });
+
+        describe('trigger keyBinds correctly based on context', function () {
+            var inputDown,
+                generalTab,
+                generalShiftTab,
+                generalEnter,
+                generalEscape,
+                generalT,
+                generalDelete,
+                datepickerUp,
+                datepickerDown,
+                datepickerCtrlUp,
+                datepickerCtrlDown,
+                datepickerLeft,
+                datepickerRight,
+                datepickerPageUp,
+                datepickerPageDown,
+                datepickerHome,
+                datepickerEnd,
+                monthpickerUp,
+                yearpickerUp,
+                decadepickerUp,
+                timepickerUp,
+                hourpickerUp,
+                minutepickerUp,
+                secondpickerUp,
+                keyDown = dpHelper.keyDown,
+                Key = dpHelper.Key;
+
+            beforeEach(function () {
+                inputDown = jasmine.createSpy('input down handler');
+                generalTab = jasmine.createSpy('general tab handler');
+                generalShiftTab = jasmine.createSpy('general shift tab handler');
+                generalEnter = jasmine.createSpy('general enter handler');
+                generalEscape = jasmine.createSpy('general escape handler');
+                generalT = jasmine.createSpy('general t handler');
+                generalDelete = jasmine.createSpy('general delete handler');
+                datepickerUp = jasmine.createSpy('datepicker up handler');
+                datepickerDown = jasmine.createSpy('datepicker down handler');
+                datepickerCtrlUp = jasmine.createSpy('datepicker control up handler');
+                datepickerCtrlDown = jasmine.createSpy('datepicker control down handler');
+                datepickerLeft = jasmine.createSpy('datepicker left handler');
+                datepickerRight = jasmine.createSpy('datepicker right handler');
+                datepickerPageUp = jasmine.createSpy('datepicker page up handler');
+                datepickerPageDown = jasmine.createSpy('datepicker page down handler');
+                datepickerHome = jasmine.createSpy('datepicker home handler');
+                datepickerEnd = jasmine.createSpy('datepicker end handler');
+                monthpickerUp = jasmine.createSpy('monthpicker up handler');
+                yearpickerUp = jasmine.createSpy('yearpicker up handler');
+                decadepickerUp = jasmine.createSpy('decadepicker up handler');
+                timepickerUp = jasmine.createSpy('timepicker up handler');
+                hourpickerUp = jasmine.createSpy('hourpicker up handler');
+                minutepickerUp = jasmine.createSpy('minutepicker up handler');
+                secondpickerUp = jasmine.createSpy('secondpicker up handler');
+
+                dtp.keyBinds({
+                    input: {
+                        down: inputDown
+                    },
+                    general: {
+                        tab: generalTab,
+                        'shift tab': generalShiftTab,
+                        enter: generalEnter,
+                        escape: generalEscape,
+                        t: generalT,
+                        'delete': generalDelete
+                    },
+                    datepicker: {
+                        up: datepickerUp,
+                        down: datepickerDown,
+                        'control up': datepickerCtrlUp,
+                        'control down': datepickerCtrlDown,
+                        left: datepickerLeft,
+                        right: datepickerRight,
+                        pageUp: datepickerPageUp,
+                        pageDown: datepickerPageDown,
+                        home: datepickerHome,
+                        end: datepickerEnd
+                    },
+                    monthpicker: {
+                        up: monthpickerUp
+                    },
+                    yearpicker: {
+                        up: yearpickerUp
+                    },
+                    decadepicker: {
+                        up: decadepickerUp
+                    },
+                    timepicker: {
+                        up: timepickerUp
+                    },
+                    hourpicker: {
+                        up: hourpickerUp
+                    },
+                    minutepicker: {
+                        up: minutepickerUp
+                    },
+                    secondpicker: {
+                        up: secondpickerUp
+                    }
+                });
+            });
+
+            describe('input', function () {
+                it('should call down handler when pressing down arrow key', function () {
+                    keyDown(dtpElement, { which: Key.down });
+                    expect(inputDown).toHaveBeenCalled();
+                });
+            });
+
+            describe('datepicker', function () {
+                var $datePicker;
+                beforeEach(function () {
+                    dtp.show();
+                    $datePicker = $('.bootstrap-datetimepicker-widget .datepicker-days table', document);
+                });
+
+                it('should call correct handler when pressing \'tab\' key', function () {
+                    keyDown($datePicker, { which: Key.tab });
+                    expect(generalTab).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'shift tab\' key', function () {
+                    keyDown($datePicker, { which: Key.shift });
+                    keyDown($datePicker, { which: Key.tab });
+                    expect(generalShiftTab).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'enter\' key', function () {
+                    keyDown($datePicker, { which: Key.enter });
+                    expect(generalEnter).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'escape\' key', function () {
+                    keyDown($datePicker, { which: Key.escape });
+                    expect(generalEscape).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'t\' key', function () {
+                    keyDown($datePicker, { which: Key.t });
+                    expect(generalT).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'delete\' key', function () {
+                    keyDown($datePicker, { which: Key['delete'] });
+                    expect(generalDelete).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'up\' key', function () {
+                    keyDown($datePicker, { which: Key.up });
+                    expect(datepickerUp).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'down\' key', function () {
+                    keyDown($datePicker, { which: Key.down });
+                    expect(datepickerDown).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'ctrl up\' key', function () {
+                    keyDown($datePicker, { which: Key.control });
+                    keyDown($datePicker, { which: Key.up });
+                    expect(datepickerCtrlUp).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'ctrl down\' key', function () {
+                    keyDown($datePicker, { which: Key.control });
+                    keyDown($datePicker, { which: Key.down });
+                    expect(datepickerCtrlDown).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'left\' key', function () {
+                    keyDown($datePicker, { which: Key.left });
+                    expect(datepickerLeft).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'right\' key', function () {
+                    keyDown($datePicker, { which: Key.right });
+                    expect(datepickerRight).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'page up\' key', function () {
+                    keyDown($datePicker, { which: Key.pageUp });
+                    expect(datepickerPageUp).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'page down\' key', function () {
+                    keyDown($datePicker, { which: Key.pageDown });
+                    expect(datepickerPageDown).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'home\' key', function () {
+                    keyDown($datePicker, { which: Key.home });
+                    expect(datepickerHome).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'end\' key', function () {
+                    keyDown($datePicker, { which: Key.end });
+                    expect(datepickerEnd).toHaveBeenCalled();
+                });
+            });
+
+            describe('monthpicker', function () {
+                it('should call correct handler when pressing \'up\' key', function () {
+                    dtp.show();
+                    var $monthPicker = $('.bootstrap-datetimepicker-widget .datepicker-months table', document);
+
+                    keyDown($monthPicker, { which: Key.up });
+                    expect(monthpickerUp).toHaveBeenCalled();
+                });
+            });
+
+            describe('yearpicker', function () {
+                it('should call correct handler when pressing \'up\' key', function () {
+                    dtp.show();
+                    var $yearPicker = $('.bootstrap-datetimepicker-widget .datepicker-years table', document);
+
+                    keyDown($yearPicker, { which: Key.up });
+                    expect(yearpickerUp).toHaveBeenCalled();
+                });
+            });
+
+            describe('decadepicker', function () {
+                it('should call correct handler when pressing \'up\' key', function () {
+                    dtp.show();
+                    var $decadePicker = $('.bootstrap-datetimepicker-widget .datepicker-decades table', document);
+
+                    keyDown($decadePicker, { which: Key.up });
+                    expect(decadepickerUp).toHaveBeenCalled();
+                });
+            });
+
+            describe('timepicker', function () {
+                it('should call correct handler when pressing \'up\' key', function () {
+                    dtp.show();
+                    var $timePicker = $('.bootstrap-datetimepicker-widget .timepicker-picker table', document);
+
+                    keyDown($timePicker, { which: Key.up });
+                    expect(timepickerUp).toHaveBeenCalled();
+                });
+            });
+
+            describe('hourpicker', function () {
+                it('should call correct handler when pressing \'up\' key', function () {
+                    dtp.show();
+                    var $hourPicker = $('.bootstrap-datetimepicker-widget .timepicker-hours table', document);
+
+                    keyDown($hourPicker, { which: Key.up });
+                    expect(hourpickerUp).toHaveBeenCalled();
+                });
+            });
+
+            describe('minutepicker', function () {
+                it('should call correct handler when pressing \'up\' key', function () {
+                    dtp.show();
+                    var $minutePicker = $('.bootstrap-datetimepicker-widget .timepicker-minutes table', document);
+
+                    keyDown($minutePicker, { which: Key.up });
+                    expect(minutepickerUp).toHaveBeenCalled();
+                });
+            });
+
+            describe('secondpicker', function () {
+                it('should call correct handler when pressing \'up\' key', function () {
+                    dtp.format('YYYY-MM-DD HH:mm:ss');
+                    dtp.show();
+                    var $secondPicker = $('.bootstrap-datetimepicker-widget .timepicker-seconds table', document);
+
+                    keyDown($secondPicker, { which: Key.up });
+                    expect(secondpickerUp).toHaveBeenCalled();
+                });
+            });
+        });
     });
 });
