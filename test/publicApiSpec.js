@@ -344,6 +344,12 @@ describe('Public API method tests', function () {
                 expect(dpHideSpy).not.toHaveBeenCalled();
             });
 
+            it('does not emit a hide event when widget is inline', function () {
+                dtp.inline(true);
+                dtp.hide();
+                expect(dpHideSpy).not.toHaveBeenCalled();
+            });
+
             it('actually hides the widget', function () {
                 dtp.show();
                 dtp.hide();
