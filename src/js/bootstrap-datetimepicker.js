@@ -2983,6 +2983,24 @@
                         return true;
                     }
                     return false;
+                },
+                home: function () {
+                    var d = this.date() || this.getMoment(),
+                        newDate = d.clone().startOf('month');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
+                },
+                end: function () {
+                    var d = this.date() || this.getMoment(),
+                        newDate = d.clone().endOf('month');
+                    if (this.isValid(newDate, 'd')) {
+                        this.date(newDate);
+                        return true;
+                    }
+                    return false;
                 }
             },
             monthpicker: {

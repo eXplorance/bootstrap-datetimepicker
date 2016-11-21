@@ -1229,6 +1229,8 @@ describe('Public API method tests', function () {
                 datepickerRight,
                 datepickerPageUp,
                 datepickerPageDown,
+                datepickerHome,
+                datepickerEnd,
                 monthpickerUp,
                 yearpickerUp,
                 decadepickerUp,
@@ -1253,6 +1255,8 @@ describe('Public API method tests', function () {
                 datepickerRight = jasmine.createSpy('datepicker right handler');
                 datepickerPageUp = jasmine.createSpy('datepicker page up handler');
                 datepickerPageDown = jasmine.createSpy('datepicker page down handler');
+                datepickerHome = jasmine.createSpy('datepicker home handler');
+                datepickerEnd = jasmine.createSpy('datepicker end handler');
                 monthpickerUp = jasmine.createSpy('monthpicker up handler');
                 yearpickerUp = jasmine.createSpy('yearpicker up handler');
                 decadepickerUp = jasmine.createSpy('decadepicker up handler');
@@ -1281,7 +1285,9 @@ describe('Public API method tests', function () {
                         left: datepickerLeft,
                         right: datepickerRight,
                         pageUp: datepickerPageUp,
-                        pageDown: datepickerPageDown
+                        pageDown: datepickerPageDown,
+                        home: datepickerHome,
+                        end: datepickerEnd
                     },
                     monthpicker: {
                         up: monthpickerUp
@@ -1392,6 +1398,16 @@ describe('Public API method tests', function () {
                 it('should call correct handler when pressing \'page down\' key', function () {
                     keyDown($datePicker, { which: Key.pageDown });
                     expect(datepickerPageDown).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'home\' key', function () {
+                    keyDown($datePicker, { which: Key.home });
+                    expect(datepickerHome).toHaveBeenCalled();
+                });
+
+                it('should call correct handler when pressing \'end\' key', function () {
+                    keyDown($datePicker, { which: Key.end });
+                    expect(datepickerEnd).toHaveBeenCalled();
                 });
             });
 

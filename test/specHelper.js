@@ -11,7 +11,9 @@ var Key = {
     left: 37,
     right: 39,
     shift: 16,
-    control: 17
+    control: 17,
+    home: 36,
+    end: 35
 };
 
 function keyDown(element, options) {
