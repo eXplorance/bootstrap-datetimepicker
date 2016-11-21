@@ -64,7 +64,8 @@ describe('Public API method tests', function () {
         dpShowSpy,
         dpHideSpy,
         dpErrorSpy,
-        dpClassifySpy;
+        dpClassifySpy,
+        dpHelper = window.dpHelper;
 
     beforeEach(function () {
         dpChangeSpy = jasmine.createSpy('dp.change event Spy');
@@ -1237,7 +1238,9 @@ describe('Public API method tests', function () {
                 timepickerUp,
                 hourpickerUp,
                 minutepickerUp,
-                secondpickerUp;
+                secondpickerUp,
+                keyDown = dpHelper.keyDown,
+                Key = dpHelper.Key;
 
             beforeEach(function () {
                 inputDown = jasmine.createSpy('input down handler');
@@ -1354,7 +1357,7 @@ describe('Public API method tests', function () {
                 });
 
                 it('should call correct handler when pressing \'delete\' key', function () {
-                    keyDown($datePicker, { which: Key.delete });
+                    keyDown($datePicker, { which: Key['delete'] });
                     expect(generalDelete).toHaveBeenCalled();
                 });
 
