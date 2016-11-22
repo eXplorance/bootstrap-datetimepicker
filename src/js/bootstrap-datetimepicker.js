@@ -1487,6 +1487,9 @@
                     if (typeof options.useCurrent === 'string') {
                         currentMoment = useCurrentGranularity[options.useCurrent](currentMoment);
                     }
+                    if (options.minDate && currentMoment.isBefore(options.minDate)) {
+                        currentMoment = options.minDate;
+                    }
                     setValue(currentMoment);
                 }
                 widget = getTemplate();
