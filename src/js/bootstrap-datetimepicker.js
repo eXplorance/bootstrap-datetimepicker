@@ -1589,14 +1589,16 @@
                         }
                     }
 
-                    keyBindings = activeKeybindingCategories.reduce(function (allBindings, bindingsToAdd) {
-                        var allKeysToAdd = Object.keys(bindingsToAdd),
-                        i;
-                        for (i = 0; i < allKeysToAdd.length; i++) {
-                            allBindings[allKeysToAdd[i]] = bindingsToAdd[allKeysToAdd[i]];
-                        }
-                        return allBindings;
-                    }, {});
+                    keyBindings = activeKeybindingCategories
+                        .filter(function (keyBindingGroup) { return !!keyBindingGroup; })
+                        .reduce(function (allBindings, bindingsToAdd) {
+                            var allKeysToAdd = Object.keys(bindingsToAdd),
+                            i;
+                            for (i = 0; i < allKeysToAdd.length; i++) {
+                                allBindings[allKeysToAdd[i]] = bindingsToAdd[allKeysToAdd[i]];
+                            }
+                            return allBindings;
+                        }, {});
 
                     keyBindingCache[area] = keyBindings;
                 }

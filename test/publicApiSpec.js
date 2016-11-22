@@ -1214,6 +1214,13 @@ describe('Public API method tests', function () {
             expect(defaultKeyBinds.secondpicker).toBeDefined();
         });
 
+        it('should work even if groups are missing', function () {
+            dtp.keyBinds({});
+            expect(function () {
+                dpHelper.keyDown(dtpElement, { which: dpHelper.Key.down });
+            }).not.toThrow();
+        });
+
         describe('trigger keyBinds correctly based on context', function () {
             var inputDown,
                 generalTab,
