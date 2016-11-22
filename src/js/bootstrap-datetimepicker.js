@@ -1608,7 +1608,9 @@
                     }
 
                     keyBindings = activeKeybindingCategories
-                        .filter(function (keyBindingGroup) { return !!keyBindingGroup; })
+                        .filter(function (keyBindingGroup) {
+                            return !!keyBindingGroup;
+                        })
                         .reduce(function (allBindings, bindingsToAdd) {
                             var allKeysToAdd = Object.keys(bindingsToAdd),
                             i;
