@@ -1642,6 +1642,13 @@
                     e.stopPropagation();
                     e.preventDefault();
                 }
+
+                // When tabbing out of fx. an input field, causes the field
+                // to change focus, and therefore we never get the 'keyup' event.
+                // Therefore we remove the keyState for tabs right away.
+                if (isInKeyMap(currentKey) && currentKey === keyMap['tab']) {
+                    keyState[currentKey] = 'r';
+                }
             },
 
             keyup = function (e) {
