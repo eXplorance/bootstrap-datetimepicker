@@ -1122,6 +1122,15 @@
                 }
             },
 
+            onDocumentMouseUp = function (e) {
+                if (
+                    !widget.is(e.target) &&
+                    widget.has(e.target).length === 0
+                ) {
+                    hide();
+                }
+            },
+
             /**
              * Hides the widget. Possibly will emit dp.hide
              */
@@ -1155,6 +1164,8 @@
                     'keydown': keydown,
                     'keyup': keyup
                 });
+
+                $('body', document).off('mouseup', onDocumentMouseUp);
 
                 widget.remove();
                 widget = false;
@@ -1517,9 +1528,12 @@
                     'keyup': keyup
                 });
 
+                $('body', document).on('mouseup', onDocumentMouseUp);
+
                 notifyEvent({
                     type: 'dp.show'
                 });
+
                 return picker;
             },
 
