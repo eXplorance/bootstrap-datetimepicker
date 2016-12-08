@@ -236,7 +236,7 @@
                             .attr('aria-live', 'assertive')
                             .attr('aria-atomic', 'true')
                             .attr('tabindex', 0)
-                            .attr('role', 'group')
+                            .attr('role', 'application')
                             .append(getHeadTemplate('datepicker-days-label'))
                             .append($('<tbody>'))
                             ),
@@ -248,6 +248,7 @@
                             .attr('aria-live', 'assertive')
                             .attr('aria-atomic', 'true')
                             .attr('tabindex', 0)
+                            .attr('role', 'application')
                             .append(getHeadTemplate('datepicker-months-label'))
                             .append(contTemplate.clone())
                             ),
@@ -259,6 +260,7 @@
                             .attr('aria-live', 'assertive')
                             .attr('aria-atomic', 'true')
                             .attr('tabindex', 0)
+                            .attr('role', 'application')
                             .append(getHeadTemplate('datepicker-years-label'))
                             .append(contTemplate.clone())
                             ),
@@ -270,6 +272,7 @@
                             .attr('aria-live', 'assertive')
                             .attr('aria-atomic', 'true')
                             .attr('tabindex', 0)
+                            .attr('role', 'application')
                             .append(getHeadTemplate('datepicker-decades-label'))
                             .append(contTemplate.clone())
                             )
@@ -334,7 +337,7 @@
                         .attr('aria-controls', 'timepicker-time-label')
                         .attr('aria-live', 'assertive')
                         .attr('aria-atomic', 'true')
-                        .attr('role', 'group')
+                        .attr('role', 'application')
                         .attr('tabindex', 0)
                         .append($('<thead>')
                             .append($('<tr>')
@@ -359,21 +362,21 @@
                         .append($('<table>')
                             .addClass('table-condensed')
                             .attr('aria-labelledby', 'timepicker-time-label')
-                            .attr('role', 'group')
+                            .attr('role', 'application')
                             .attr('tabindex', 0)
                             ),
                     minutesView = $('<div>').addClass('timepicker-minutes')
                         .append($('<table>')
                             .addClass('table-condensed')
                             .attr('aria-labelledby', 'timepicker-time-label')
-                            .attr('role', 'group')
+                            .attr('role', 'application')
                             .attr('tabindex', 0)
                             ),
                     secondsView = $('<div>').addClass('timepicker-seconds')
                         .append($('<table>')
                             .addClass('table-condensed')
                             .attr('aria-labelledby', 'timepicker-time-label')
-                            .attr('role', 'group')
+                            .attr('role', 'application')
                             .attr('tabindex', 0)
                             ),
                     ret = [getTimePickerMainTemplate()];
