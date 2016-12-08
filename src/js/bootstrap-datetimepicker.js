@@ -854,6 +854,7 @@
                 daysViewHeader.eq(1).find('span.picker-switch-label').attr('title', options.tooltips.selectMonth);
                 daysViewHeader.eq(2).find('span').attr('title', options.tooltips.nextMonth);
 
+console.log('fillDate');
                 daysView.find('.disabled').removeClass('disabled');
                 daysViewHeader.eq(1).find('span.picker-switch-label').text(viewDate.format(options.dayViewHeaderFormat));
                 daysViewHeader.eq(1).find('span.hidden').text(viewDate.format(options.dayViewHeaderFormat) + ', ' + viewDate.format('D'));
@@ -1128,6 +1129,18 @@
             },
 
             onDocumentMouseUp = function (e) {
+                if (
+                    component &&
+                    !(
+                        component.is(e.target) &&
+                        component.has(e.target).length === 0
+                    )
+                ) {
+                    // Do not hide, if user is clicking on the 'open date picker' button
+                    // That will trigger a hide, and then show (like it's responding).
+                    return;
+                }
+
                 if (
                     !widget.is(e.target) &&
                     widget.has(e.target).length === 0
