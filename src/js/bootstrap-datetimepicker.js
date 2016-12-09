@@ -852,7 +852,6 @@
                 daysViewHeader.eq(1).find('span.picker-switch-label').attr('title', options.tooltips.selectMonth);
                 daysViewHeader.eq(2).find('span').attr('title', options.tooltips.nextMonth);
 
-console.log('fillDate');
                 daysView.find('.disabled').removeClass('disabled');
                 daysViewHeader.eq(1).find('span.picker-switch-label').text(viewDate.format(options.dayViewHeaderFormat));
                 daysViewHeader.eq(1).find('span.hidden').text(viewDate.format(options.dayViewHeaderFormat) + ', ' + viewDate.format('D'));
