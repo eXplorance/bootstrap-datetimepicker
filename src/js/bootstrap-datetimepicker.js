@@ -1128,13 +1128,7 @@
             },
 
             onDocumentMouseUp = function (e) {
-                if (
-                    component &&
-                    !(
-                        component.is(e.target) &&
-                        component.has(e.target).length === 0
-                    )
-                ) {
+                if (component && (component.is(e.target) || component.has(e.target).length > 0)) {
                     // Do not hide, if user is clicking on the 'open date picker' button
                     // That will trigger a hide, and then show (like it's responding).
                     return;
