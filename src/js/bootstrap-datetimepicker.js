@@ -198,7 +198,7 @@
                 return (isEnabled('y') || isEnabled('M') || isEnabled('d'));
             },
 
-            getHeadTemplate = function (labelId) {
+            getHeadTemplate = function () {
                 return $('<thead>')
                     .append($('<tr>')
                         .append($('<th>').addClass('prev').attr('data-action', 'previous')
@@ -210,11 +210,6 @@
                             .attr('data-action', 'pickerSwitch')
                             .append($('<span>')
                                 .addClass('picker-switch-label')
-                                )
-                            .append($('<span>')
-                                .addClass('hidden')
-                                .attr('id', labelId)
-                                .attr('role', 'presentation')
                                 )
                             )
                         .append($('<th>').addClass('next').attr('data-action', 'next')
@@ -233,46 +228,37 @@
                     $('<div>').addClass('datepicker-days')
                         .append($('<table>')
                             .addClass('table-condensed')
-                            .attr('aria-labelledby', 'datepicker-days-label')
-                            .attr('aria-controls', 'datepicker-days-label')
-                            .attr('aria-live', 'assertive')
-                            .attr('aria-atomic', 'true')
+                            .attr('summary', options.tooltips.selectDate)
                             .attr('tabindex', 0)
-                            .attr('role', 'group')
-                            .append(getHeadTemplate('datepicker-days-label'))
+                            .attr('role', 'application')
+                            .append(getHeadTemplate())
                             .append($('<tbody>'))
                             ),
                     $('<div>').addClass('datepicker-months')
                         .append($('<table>')
                             .addClass('table-condensed')
-                            .attr('aria-labelledby', 'datepicker-months-label')
-                            .attr('aria-controls', 'datepicker-months-label')
-                            .attr('aria-live', 'assertive')
-                            .attr('aria-atomic', 'true')
+                            .attr('summary', options.tooltips.selectMonth)
                             .attr('tabindex', 0)
-                            .append(getHeadTemplate('datepicker-months-label'))
+                            .attr('role', 'application')
+                            .append(getHeadTemplate())
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-years')
                         .append($('<table>')
                             .addClass('table-condensed')
-                            .attr('aria-labelledby', 'datepicker-years-label')
-                            .attr('aria-controls', 'datepicker-years-label')
-                            .attr('aria-live', 'assertive')
-                            .attr('aria-atomic', 'true')
+                            .attr('summary', options.tooltips.selectYear)
                             .attr('tabindex', 0)
-                            .append(getHeadTemplate('datepicker-years-label'))
+                            .attr('role', 'application')
+                            .append(getHeadTemplate())
                             .append(contTemplate.clone())
                             ),
                     $('<div>').addClass('datepicker-decades')
                         .append($('<table>')
                             .addClass('table-condensed')
-                            .attr('aria-labelledby', 'datepicker-decades-label')
-                            .attr('aria-controls', 'datepicker-decades-label')
-                            .attr('aria-live', 'assertive')
-                            .attr('aria-atomic', 'true')
+                            .attr('summary', options.tooltips.selectDecade)
                             .attr('tabindex', 0)
-                            .append(getHeadTemplate('datepicker-decades-label'))
+                            .attr('role', 'application')
+                            .append(getHeadTemplate())
                             .append(contTemplate.clone())
                             )
                 ];
@@ -333,19 +319,19 @@
                     .append($('<table>')
                         .addClass('table-condensed')
                         .attr('aria-labelledby', 'timepicker-time-label')
-                        .attr('aria-controls', 'timepicker-time-label')
-                        .attr('aria-live', 'assertive')
-                        .attr('aria-atomic', 'true')
-                        .attr('role', 'group')
+                        .attr('role', 'application')
+                        .attr('summary', options.tooltips.selectTime)
                         .attr('tabindex', 0)
                         .append($('<thead>')
                             .append($('<tr>')
-                                .addClass('hidden')
+                                .addClass('pseudo-hidden')
                                 .append($('<th>')
                                     .attr('colspan', topRow.children().length)
                                     .append($('<span>')
                                         .attr('id', 'timepicker-time-label')
-                                        .attr('role', 'presentation')
+                                        .attr('role', 'alert')
+                                        .attr('aria-live', 'assertive')
+                                        .attr('aria-atomic', 'true')
                                         )
                                     )
                                 )
@@ -361,21 +347,21 @@
                         .append($('<table>')
                             .addClass('table-condensed')
                             .attr('aria-labelledby', 'timepicker-time-label')
-                            .attr('role', 'group')
+                            .attr('role', 'application')
                             .attr('tabindex', 0)
                             ),
                     minutesView = $('<div>').addClass('timepicker-minutes')
                         .append($('<table>')
                             .addClass('table-condensed')
                             .attr('aria-labelledby', 'timepicker-time-label')
-                            .attr('role', 'group')
+                            .attr('role', 'application')
                             .attr('tabindex', 0)
                             ),
                     secondsView = $('<div>').addClass('timepicker-seconds')
                         .append($('<table>')
                             .addClass('table-condensed')
                             .attr('aria-labelledby', 'timepicker-time-label')
-                            .attr('role', 'group')
+                            .attr('role', 'application')
                             .attr('tabindex', 0)
                             ),
                     ret = [getTimePickerMainTemplate()];
@@ -463,7 +449,7 @@
             },
 
             getTemplate = function () {
-                var template = $('<div>').addClass('bootstrap-datetimepicker-widget dropdown-menu').attr('role', 'application'),
+                var template = $('<div>').addClass('bootstrap-datetimepicker-widget dropdown-menu'),
                     dateView = $('<div>').addClass('datepicker').append(getDatePickerTemplate()),
                     timeView = $('<div>').addClass('timepicker').append(getTimePickerTemplate()),
                     content = $('<ul>').addClass('list-unstyled'),
@@ -909,8 +895,9 @@
                     row.append($('<td>')
                         .attr('data-action', 'selectDay')
                         .attr('data-day', currentDate.format('L'))
-                        .addClass(clsNames.join(' '))
                         .attr('aria-selected', selectedDay ? 'true' : 'false')
+                        .attr('aria-label', currentDate.format('L'))
+                        .addClass(clsNames.join(' '))
                         .attr('id', 'date' + currentDate.format('YYYYMMDD'))
                         .text(currentDate.date())
                         );
@@ -1047,7 +1034,7 @@
                         timeLabel += ' ' + date.format('A');
                     }
 
-                    $timeLabel.text(timeLabel);
+                    $timeLabel.empty().text(timeLabel);
                 }
 
                 fillHours();
@@ -1125,6 +1112,12 @@
             },
 
             onDocumentMouseUp = function (e) {
+                if (component && (component.is(e.target) || component.has(e.target).length > 0)) {
+                    // Do not hide, if user is clicking on the 'open date picker' button
+                    // That will trigger a hide, and then show (like it's responding).
+                    return;
+                }
+
                 if (
                     !widget.is(e.target) &&
                     widget.has(e.target).length === 0
