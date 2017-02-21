@@ -1279,14 +1279,31 @@
                 },
 
                 selectDay: function (e) {
-                    var day = viewDate.clone();
+                    var day = viewDate.clone(),
+                        newDay = parseInt($(e.target).text(), 10),
+                        newDate,
+                        startOfNewDate,
+                        endOfNewDate;
+
                     if ($(e.target).is('.old')) {
                         day.subtract(1, 'M');
                     }
                     if ($(e.target).is('.new')) {
                         day.add(1, 'M');
                     }
-                    setValue(day.date(parseInt($(e.target).text(), 10)));
+
+                    newDate = day.date(newDay);
+                    startOfNewDate = newDate.clone().startOf('d');
+                    endOfNewDate = newDate.clone().endOf('d');
+
+                    if (isValid(newDate)) {
+                        setValue(newDate);
+                    } else if (isValid(startOfNewDate)) {
+                        setValue(startOfNewDate);
+                    } else if (isValid(endOfNewDate)) {
+                        setValue(endOfNewDate);
+                    }
+
                     if (!hasTime() && !options.keepOpen && !options.inline) {
                         hide();
                     }
