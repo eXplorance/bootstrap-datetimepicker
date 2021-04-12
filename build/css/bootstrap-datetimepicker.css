@@ -79,6 +79,18 @@
 .bootstrap-datetimepicker-widget a[data-action]:active {
   box-shadow: none;
 }
+.bootstrap-datetimepicker-widget .timepicker-picker tr.pseudo-hidden th {
+  height: 0;
+  line-height: 0;
+  overflow: hidden;
+  cursor: default;
+  padding: 0;
+}
+.bootstrap-datetimepicker-widget .timepicker-picker tr.pseudo-hidden th span {
+  color: transparent;
+  font-size: 1px;
+  text-indent: -9999px;
+}
 .bootstrap-datetimepicker-widget .timepicker-hour,
 .bootstrap-datetimepicker-widget .timepicker-minute,
 .bootstrap-datetimepicker-widget .timepicker-second {
@@ -272,7 +284,7 @@
   width: 54px;
 }
 .bootstrap-datetimepicker-widget table td.cw {
-  font-size: .8em;
+  font-size: 0.8em;
   height: 20px;
   line-height: 20px;
   color: #777777;

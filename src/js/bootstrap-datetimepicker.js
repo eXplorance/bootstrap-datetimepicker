@@ -1178,6 +1178,10 @@
 
                 viewDate = date.clone();
 
+                notifyEvent({
+                    type: 'dp.hidden'
+                });
+
                 return picker;
             },
 
